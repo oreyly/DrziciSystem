@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Debug\\INodeManager.obj",
+            "outputs": [
+                "x64\\Debug\\INodeManager.h_261DA72750CD8DE1.ifc.dt.module.json",
+                "x64\\Debug\\INodeManager.h_261DA72750CD8DE1.ifc.dt.d.json",
+                "x64\\Debug\\INodeManager.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "D:\\src\\ceplusplus\\DrziciSystem\\DrziciSystem\\INodeManager.h",
+                    "source-path": "d:\\src\\ceplusplus\\drzicisystem\\drzicisystem\\inodemanager.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

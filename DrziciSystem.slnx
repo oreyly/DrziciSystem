@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="DrziciSystem/DrziciSystem.vcxproj" Id="5d4fe1ea-402e-4abe-a187-b7e1786c6228" />
+</Solution>

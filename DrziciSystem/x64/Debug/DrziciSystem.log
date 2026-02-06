@@ -1,0 +1,10 @@
+﻿  Scanning sources for module dependencies...
+  FSManager.cpp
+D:\src\ceplusplus\DrziciSystem\DrziciSystem\FSManager.cpp(394,13): error C2672: 'std::bit_cast': no matching overloaded function found
+      C:\Program Files\Microsoft Visual Studio\18\Insiders\VC\Tools\MSVC\14.50.35717\include\bit(31,26):
+      could be '_To std::bit_cast(const _From &) noexcept'
+          D:\src\ceplusplus\DrziciSystem\DrziciSystem\FSManager.cpp(394,13):
+          the associated constraints are not satisfied
+              C:\Program Files\Microsoft Visual Studio\18\Insiders\VC\Tools\MSVC\14.50.35717\include\bit(30,27):
+              the constraint was not satisfied
+  

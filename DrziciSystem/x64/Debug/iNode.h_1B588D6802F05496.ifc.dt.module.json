@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Debug\\iNode.obj",
+            "outputs": [
+                "x64\\Debug\\iNode.h_1B588D6802F05496.ifc.dt.module.json",
+                "x64\\Debug\\iNode.h_1B588D6802F05496.ifc.dt.d.json",
+                "x64\\Debug\\iNode.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "D:\\src\\ceplusplus\\DrziciSystem\\DrziciSystem\\iNode.h",
+                    "source-path": "d:\\src\\ceplusplus\\drzicisystem\\drzicisystem\\inode.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

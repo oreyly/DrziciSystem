@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Debug\\FSManager.h.obj",
+            "outputs": [
+                "D:\\src\\ceplusplus\\DrziciSystem\\DrziciSystem\\x64\\Debug\\vc145.pdb",
+                "x64\\Debug\\",
+                "D:\\src\\ceplusplus\\DrziciSystem\\DrziciSystem\\x64\\Debug\\FSManager.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "FSManager.h",
+                    "source-path": "d:\\src\\ceplusplus\\drzicisystem\\drzicisystem\\fsmanager.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

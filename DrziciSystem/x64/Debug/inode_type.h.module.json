@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Debug\\INODE_TYPE.h.obj",
+            "outputs": [
+                "D:\\src\\ceplusplus\\DrziciSystem\\DrziciSystem\\x64\\Debug\\vc145.pdb",
+                "x64\\Debug\\",
+                "D:\\src\\ceplusplus\\DrziciSystem\\DrziciSystem\\x64\\Debug\\INODE_TYPE.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "INODE_TYPE.h",
+                    "source-path": "d:\\src\\ceplusplus\\drzicisystem\\drzicisystem\\inode_type.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

@@ -1,0 +1,19 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "d:\\src\\ceplusplus\\drzicisystem\\drzicisystem\\inode_type.h",
+        "ProvidedModule": "",
+        "Includes": [
+            "c:\\program files\\microsoft visual studio\\18\\insiders\\vc\\tools\\msvc\\14.50.35717\\include\\cstdint",
+            "c:\\program files\\microsoft visual studio\\18\\insiders\\vc\\tools\\msvc\\14.50.35717\\include\\yvals_core.h",
+            "c:\\program files\\microsoft visual studio\\18\\insiders\\vc\\tools\\msvc\\14.50.35717\\include\\vcruntime.h",
+            "c:\\program files\\microsoft visual studio\\18\\insiders\\vc\\tools\\msvc\\14.50.35717\\include\\sal.h",
+            "c:\\program files\\microsoft visual studio\\18\\insiders\\vc\\tools\\msvc\\14.50.35717\\include\\concurrencysal.h",
+            "c:\\program files\\microsoft visual studio\\18\\insiders\\vc\\tools\\msvc\\14.50.35717\\include\\vadefs.h",
+            "c:\\program files\\microsoft visual studio\\18\\insiders\\vc\\tools\\msvc\\14.50.35717\\include\\xkeycheck.h",
+            "c:\\program files\\microsoft visual studio\\18\\insiders\\vc\\tools\\msvc\\14.50.35717\\include\\stdint.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

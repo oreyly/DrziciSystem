@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Debug\\INODE_TYPE.obj",
+            "outputs": [
+                "x64\\Debug\\INODE_TYPE.h_C8763F4D5CEBFCB.ifc.dt.module.json",
+                "x64\\Debug\\INODE_TYPE.h_C8763F4D5CEBFCB.ifc.dt.d.json",
+                "x64\\Debug\\INODE_TYPE.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "D:\\src\\ceplusplus\\DrziciSystem\\DrziciSystem\\INODE_TYPE.h",
+                    "source-path": "d:\\src\\ceplusplus\\drzicisystem\\drzicisystem\\inode_type.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}
