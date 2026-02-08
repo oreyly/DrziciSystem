@@ -3,15 +3,15 @@
     "revision": 0,
     "rules": [
         {
-            "primary-output": "x64\\Debug\\FSManager.h.obj",
+            "primary-output": "x64\\Debug\\FSManager.obj",
             "outputs": [
-                "C:\\Mates\\cpp\\DrziciSystem\\DrziciSystem\\x64\\Debug\\vc145.pdb",
-                "x64\\Debug\\",
-                "C:\\Mates\\cpp\\DrziciSystem\\DrziciSystem\\x64\\Debug\\FSManager.h.ifc"
+                "x64\\Debug\\FSManager.h_8F1CCC08452122D7.ifc.dt.module.json",
+                "x64\\Debug\\FSManager.h_8F1CCC08452122D7.ifc.dt.d.json",
+                "x64\\Debug\\FSManager.h.ifc"
             ],
             "provides": [
                 {
-                    "logical-name": "FSManager.h",
+                    "logical-name": "C:\\Mates\\cpp\\DrziciSystem\\DrziciSystem\\FSManager.h",
                     "source-path": "c:\\mates\\cpp\\drzicisystem\\drzicisystem\\fsmanager.h",
                     "lookup-method": "absolute"
                 }

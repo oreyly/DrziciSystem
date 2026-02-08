@@ -88,7 +88,8 @@ private:
 	CoroutineGenerator<std::pair<uint32_t, std::array<uint8_t, FSManager::CLUSTER_SIZE>>> _getInodeClusters();
 	INODE_TYPE _getInodeType(uint32_t address);
 
-	uint32_t _writeCluster(std::span<const uint8_t, CLUSTER_SIZE> clusterBytes);
+	uint32_t _writeNewCluster(std::span<const uint8_t, CLUSTER_SIZE> clusterBytes);
+	void _rewriteCluster(uint32_t address, std::span<const uint8_t, CLUSTER_SIZE> clusterBytes);
 	std::array<uint8_t, CLUSTER_SIZE> _readCluster(uint32_t address);
 
 	bool _getMapValue(uint32_t mapIndex, uint32_t index);

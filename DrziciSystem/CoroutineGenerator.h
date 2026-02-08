@@ -59,7 +59,7 @@ struct CoroutineGenerator
 
     bool next()
     {
-        if (handle)
+        if (handle && !handle.done())
         {
             handle.resume();
             return !handle.done();

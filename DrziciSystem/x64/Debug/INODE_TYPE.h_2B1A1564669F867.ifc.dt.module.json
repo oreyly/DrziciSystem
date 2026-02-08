@@ -3,15 +3,15 @@
     "revision": 0,
     "rules": [
         {
-            "primary-output": "x64\\Debug\\INODE_TYPE.h.obj",
+            "primary-output": "x64\\Debug\\INODE_TYPE.obj",
             "outputs": [
-                "C:\\Mates\\cpp\\DrziciSystem\\DrziciSystem\\x64\\Debug\\vc145.pdb",
-                "x64\\Debug\\",
-                "C:\\Mates\\cpp\\DrziciSystem\\DrziciSystem\\x64\\Debug\\INODE_TYPE.h.ifc"
+                "x64\\Debug\\INODE_TYPE.h_2B1A1564669F867.ifc.dt.module.json",
+                "x64\\Debug\\INODE_TYPE.h_2B1A1564669F867.ifc.dt.d.json",
+                "x64\\Debug\\INODE_TYPE.h.ifc"
             ],
             "provides": [
                 {
-                    "logical-name": "INODE_TYPE.h",
+                    "logical-name": "C:\\Mates\\cpp\\DrziciSystem\\DrziciSystem\\INODE_TYPE.h",
                     "source-path": "c:\\mates\\cpp\\drzicisystem\\drzicisystem\\inode_type.h",
                     "lookup-method": "absolute"
                 }

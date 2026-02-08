@@ -3,6 +3,7 @@
 #include "magic_enum.hpp"
 
 #include <bit>
+#include <iostream>
 
 
 FSManager::FSManager(std::string filePath) : _inited(false)
@@ -88,6 +89,16 @@ void FSManager::_writeSuperblock()
 	_file.write(reinterpret_cast<char*>(&_dataCount), sizeof(_dataCount));
 	_file.write(reinterpret_cast<char*>(&_inodeStart), sizeof(_inodeStart));
 	_file.write(reinterpret_cast<char*>(&_dataStart), sizeof(_dataStart));
+
+	std::cout << "Info:" << std::endl;
+
+	std::cout << std::to_string(_size) << std::endl;
+	std::cout << std::to_string(_iMapStart) << std::endl;
+	std::cout << std::to_string(_dMapStart) << std::endl;
+	std::cout << std::to_string(_inodeCount) << std::endl;
+	std::cout << std::to_string(_dataCount) << std::endl;
+	std::cout << std::to_string(_inodeStart) << std::endl;
+	std::cout << std::to_string(_dataStart) << std::endl;
 }
 
 void FSManager::_writeInodeMap()
@@ -150,6 +161,7 @@ bool FSManager::_getMapValue(uint32_t mapIndex, uint32_t index)
 
 uint32_t FSManager::_getFreeMapIndex(uint32_t mapIndex, uint32_t mapSize)
 {
+	std::streampos originalPos = _file.tellg();
 	_file.seekg(mapIndex, std::ios::beg);
 
 	for (uint32_t i = 0; i < mapSize; ++i)
@@ -163,11 +175,12 @@ uint32_t FSManager::_getFreeMapIndex(uint32_t mapIndex, uint32_t mapSize)
 			continue;
 		}
 
-		uint8_t freeBit = 1;
+		uint8_t freeBit = 0b10000000;
 		for (int j = 0; j < BYTE_SIZE; ++j)
 		{
 			if ((mapByte & freeBit) == 0)
 			{
+				_file.seekg(originalPos);
 				return (i * BYTE_SIZE) + j;
 			}
 
@@ -221,7 +234,7 @@ uint32_t FSManager::CreateINode(uint64_t size, INODE_TYPE type, CoroutineGenerat
 			continue;
 		}
 
-		newAddress = _writeCluster(clusterGenerator.value());
+		newAddress = _writeNewCluster(clusterGenerator.value());
 		_file.write(reinterpret_cast<char*>(&newAddress), sizeof(newAddress));
 	}
 
@@ -246,6 +259,7 @@ uint32_t FSManager::CreateINode(uint64_t size, INODE_TYPE type, CoroutineGenerat
 		_file.write(reinterpret_cast<char*>(&newAddress), sizeof(newAddress));
 	}
 
+	_file.flush();
 	return inodeAddress;
 }
 
@@ -267,10 +281,10 @@ uint32_t FSManager::_createIndirectLink(uint8_t rank, CoroutineGenerator<std::ar
 				break;
 			}
 
-			childClusters[i] = _writeCluster(clusterGenerator.value());
+			childClusters[i] = _writeNewCluster(clusterGenerator.value());
 		}
 
-		return _writeCluster(std::span<const uint8_t, CLUSTER_SIZE>(
+		return _writeNewCluster(std::span<const uint8_t, CLUSTER_SIZE>(
 			reinterpret_cast<const uint8_t*>(childClusters.data()),
 			CLUSTER_SIZE));
 	}
@@ -292,24 +306,35 @@ uint32_t FSManager::_createIndirectLink(uint8_t rank, CoroutineGenerator<std::ar
 		childClusters[i] = clusterAddress;
 	}
 
-	return _writeCluster(std::span<const uint8_t, CLUSTER_SIZE>(
+	return _writeNewCluster(std::span<const uint8_t, CLUSTER_SIZE>(
 		reinterpret_cast<const uint8_t*>(childClusters.data()),
 		CLUSTER_SIZE));
 }
 
-uint32_t FSManager::_writeCluster(std::span<const uint8_t, CLUSTER_SIZE> clusterBytes)
+uint32_t FSManager::_writeNewCluster(std::span<const uint8_t, CLUSTER_SIZE> clusterBytes)
 {
 	uint32_t index = GetFreeDMapIndex();
 	SetDMapIndex(index, MAP_CELL_STATE::USED);
 
 	uint32_t address = _dataStart + (index * CLUSTER_SIZE);
 
+	std::streampos originalPos = _file.tellg();
 	_file.seekp(address, std::ios::beg);
-	_file.write(reinterpret_cast<char*>(&clusterBytes), sizeof(clusterBytes));
+	_file.write(reinterpret_cast<const char*>(clusterBytes.data()), clusterBytes.size());
+	_file.seekg(originalPos);
+	_file.flush();
 
 	return address;
 }
 
+void FSManager::_rewriteCluster(uint32_t address, std::span<const uint8_t, CLUSTER_SIZE> clusterBytes)
+{
+	std::streampos originalPos = _file.tellg();
+	_file.seekp(address, std::ios::beg);
+	_file.write(reinterpret_cast<const char*>(clusterBytes.data()), clusterBytes.size());
+	_file.flush();
+	_file.seekg(originalPos);
+}
 
 void FSManager::SetDMapIndex(uint32_t index, MAP_CELL_STATE value)
 {
@@ -325,6 +350,7 @@ void FSManager::_setMapIndex(uint32_t mapIndex, uint32_t index, MAP_CELL_STATE v
 {
 	uint8_t mapByte;
 
+	std::streampos originalPos = _file.tellg();
 	_file.seekg(mapIndex + (index / BYTE_SIZE), std::ios::beg);
 	_file.read(reinterpret_cast<char*>(&mapByte), sizeof(mapByte));
 
@@ -345,42 +371,57 @@ void FSManager::_setMapIndex(uint32_t mapIndex, uint32_t index, MAP_CELL_STATE v
 
 	_file.seekp(mapIndex + (index / BYTE_SIZE), std::ios::beg);
 	_file.write(reinterpret_cast<char*>(&mapByte), sizeof(mapByte));
+	_file.flush();
+	_file.seekg(originalPos);
 }
 
 void FSManager::_createDefaultINode()
 {
 	SetIMapIndex(0, MAP_CELL_STATE::USED);
 
-	uint64_t defaultSize = 0;
+	uint64_t defaultSize = CLUSTER_SIZE;
 	INODE_TYPE defaultType = INODE_TYPE::FOLDER;
 	uint32_t freeAddress = 0;
-
+	std::streampos originalPos = _file.tellg();
 	_file.seekp(_inodeStart, std::ios::beg);
 	_file.write(reinterpret_cast<char*>(&defaultSize), sizeof(defaultSize));
+	originalPos = _file.tellg();
 	_file.write(reinterpret_cast<char*>(&defaultType), sizeof(defaultType));
-
+	originalPos = _file.tellg();
+	_file.flush();
 	std::array<uint8_t, CLUSTER_SIZE> emptyCluster {0};
-	_writeCluster(emptyCluster);
-
+	uint32_t firstClusterAddress = _writeNewCluster(emptyCluster);
+	originalPos = _file.tellg();
+	_file.write(reinterpret_cast<char*>(&firstClusterAddress), sizeof(firstClusterAddress));
+	originalPos = _file.tellg();
+	_file.flush();
+	originalPos = _file.tellg();
 	for (uint32_t i = 1; i < DIRECT_LINK_COUNT; ++i)
 	{
 		_file.write(reinterpret_cast<char*>(&freeAddress), sizeof(freeAddress));
+		originalPos = _file.tellg();
 	}
 
 	for (uint32_t i = 0; i < INDIRECT_LINK_1_COUNT; ++i)
 	{
 		_file.write(reinterpret_cast<char*>(&freeAddress), sizeof(freeAddress));
+		originalPos = _file.tellg();
 	}
 
 	for (uint32_t i = 0; i < INDIRECT_LINK_2_COUNT; ++i)
 	{
 		_file.write(reinterpret_cast<char*>(&freeAddress), sizeof(freeAddress));
+		originalPos = _file.tellg();
 	}
 
 	for (uint32_t i = 0; i < INDIRECT_LINK_3_COUNT; ++i)
 	{
 		_file.write(reinterpret_cast<char*>(&freeAddress), sizeof(freeAddress));
+		originalPos = _file.tellg();
 	}
+	originalPos = _file.tellg();
+	_file.flush();
+	originalPos = _file.tellg();
 }
 
 std::vector<std::pair<std::string, INODE_TYPE>> FSManager::GetContent()
@@ -391,13 +432,11 @@ std::vector<std::pair<std::string, INODE_TYPE>> FSManager::GetContent()
 	{
 		for (uint32_t i = 0; i < CLUSTER_SIZE; i += (MAX_FILENAME_LENGTH + ADDRESS_LENGTH))
 		{
-			auto sub = cluster.subspan(offset, count);
-			if (std::bit_cast<uint32_t>(*(reinterpret_cast<const uint8_t(*)[MAX_FILENAME_LENGTH + ADDRESS_LENGTH]>(&cluster[i]))) == 0)
+			std::string filename(reinterpret_cast<const char*>(&cluster[i]), MAX_FILENAME_LENGTH);
+			if (filename.find_first_not_of('\0') == std::string::npos)
 			{
 				continue;
 			}
-
-			std::string filename(reinterpret_cast<const char*>(&cluster[i]), MAX_FILENAME_LENGTH);
 			uint32_t address = std::bit_cast<uint32_t>(*(reinterpret_cast<const uint8_t(*)[ADDRESS_LENGTH]>(&cluster[i + MAX_FILENAME_LENGTH])));
 			INODE_TYPE fileType = _getInodeType(address);
 
@@ -451,7 +490,7 @@ INODE_TYPE FSManager::_getInodeType(uint32_t address)
 	uint8_t typeInt;
 	std::streampos originalPos = _file.tellg();
 
-	_file.seekg(address, std::ios::beg);
+	_file.seekg(address + sizeof(uint32_t), std::ios::beg);
 	_file.read(reinterpret_cast<char*>(&typeInt), sizeof(typeInt));
 
 	_file.seekg(originalPos);
@@ -470,16 +509,34 @@ void FSManager::CreateFolder(std::string name)
 {
 	auto emptyGenerator = [] () -> CoroutineGenerator<std::array<uint8_t, CLUSTER_SIZE>>
 		{
-			co_return;
+			std::array<uint8_t, CLUSTER_SIZE> emptyCluster{ 0 };
+			co_yield emptyCluster;
 		}();
 
-	uint32_t newAddress = CreateINode(0, INODE_TYPE::FOLDER, emptyGenerator);
+	uint32_t newAddress = CreateINode(CLUSTER_SIZE, INODE_TYPE::FOLDER, emptyGenerator);
+	_addToFolder(name, newAddress);
 }
 
 void FSManager::_addToFolder(std::string name, uint32_t address)
 {
 	for (auto& [clusterAddress, cluster] : _getInodeClusters())
 	{
-		
+		for (uint32_t i = 0; i < CLUSTER_SIZE; i += (MAX_FILENAME_LENGTH + ADDRESS_LENGTH))
+		{
+			std::string filename(reinterpret_cast<const char*>(&cluster[i]), MAX_FILENAME_LENGTH);
+			if (filename.find_first_not_of('\0') != std::string::npos)
+			{
+				continue;
+			}
+
+			std::array<uint8_t, CLUSTER_SIZE> newCluster = cluster;
+			std::copy(name.begin(), name.end(), newCluster.begin() + i);
+			std::fill(newCluster.begin() + i + name.length(), newCluster.begin() + i + MAX_FILENAME_LENGTH, 0);
+
+			std::memcpy(newCluster.data() + i + MAX_FILENAME_LENGTH, &address, sizeof(address));
+
+			_rewriteCluster(clusterAddress, newCluster);
+			return;
+		}
 	}
 }
