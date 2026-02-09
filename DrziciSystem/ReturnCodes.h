@@ -1,0 +1,11 @@
+#pragma once
+
+enum class RETURN_CODES
+{
+	SUCCESS,
+	PATH_NOT_FOUND,
+	EXIST,
+	NOT_FOLDER,
+	NOT_FILE,
+	NOT_EMPTY
+};
